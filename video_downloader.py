@@ -34,4 +34,21 @@ for dir in dirs:
 					with open(fileName, 'wb') as fileHandle:
 						ftp.retrbinary("RETR %s" % file, fileHandle.write)
 						fileHandle.close()
-		exit(0)
+
+		ftp.cwd("..")
+		ftp.cwd("Back")
+		files = ftp.nlst()
+		for file in files:
+			fileName = dir + "/Back/" + file
+			if os.path.exists(fileName) != True:
+				with open(fileName, 'wb') as fileHandle:
+					ftp.retrbinary("RETR %s" % file, fileHandle.write)
+					fileHandle.close()
+			else:
+				ftpFileSize = ftp.size(file)
+				localFileSize = os.stat(fileName).st_size
+				if ftpFileSize != localFileSize:
+					os.rm(fileName)
+					with open(fileName, 'wb') as fileHandle:
+						ftp.retrbinary("RETR %s" % file, fileHandle.write)
+						fileHandle.close()
